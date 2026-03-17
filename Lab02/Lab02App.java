@@ -4,16 +4,21 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
 import java.sql.*;
+import java.util.Scanner;
+import java.io.Console;
 
 public class Lab02App extends JFrame 
 {
-    // Database credentials
-    String url = "jdbc:mysql://localhost:3306/app_db";
-    String dbUser = "Lab02_user";
-    String dbPassword = "Bruh1488Why_";
+    private String url;
+    private String dbUser;
+    private String dbPassword;
 
-    public Lab02App() 
+    public Lab02App(String url, String dbUser, String dbPassword) 
     {
+        this.url = url;
+        this.dbUser = dbUser;
+        this.dbPassword = dbPassword;
+
         setTitle("Employee Database Viewer (Editable)");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400);
@@ -21,20 +26,18 @@ public class Lab02App extends JFrame
 
         String[] columnNames = {"id", "name", "department", "salary"};
         
-        // 1. Create a custom TableModel that makes the ID column read-only
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) 
         {
             @Override
             public boolean isCellEditable(int row, int column) 
             {
-                return column != 0; // Column 0 (ID) cannot be edited
+                return column != 0;
             }
         };
         
         JTable table = new JTable(tableModel);
 
-        // 2. Fetch Initial Data
-        try (Connection conn = DriverManager.getConnection(url, dbUser, dbPassword);
+        try (Connection conn = DriverManager.getConnection(this.url, this.dbUser, this.dbPassword);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM employees")) 
         {
@@ -53,24 +56,20 @@ public class Lab02App extends JFrame
             JOptionPane.showMessageDialog(this, "Failed to load data.");
         }
 
-        // 3. Add the Listener to catch user edits AFTER initial data is loaded
         tableModel.addTableModelListener(new TableModelListener() 
         {
             @Override
             public void tableChanged(TableModelEvent e) 
             {
-                // Only trigger if a specific cell was updated
                 if (e.getType() == TableModelEvent.UPDATE && e.getColumn() != -1) 
                 {
                     int row = e.getFirstRow();
                     int column = e.getColumn();
                     
-                    // Get the new value the user typed, the ID of the row, and the column name
                     Object newValue = tableModel.getValueAt(row, column);
                     int id = (int) tableModel.getValueAt(row, 0); 
                     String columnName = tableModel.getColumnName(column);
 
-                    // Send the update to MySQL
                     updateDatabase(id, columnName, newValue);
                 }
             }
@@ -80,17 +79,14 @@ public class Lab02App extends JFrame
         add(scrollPane, BorderLayout.CENTER);
     }
 
-    // 4. Method to handle the background SQL UPDATE
     private void updateDatabase(int id, String columnName, Object newValue) 
     {
-        // We use a PreparedStatement to safely inject the new value into the SQL query
         String sql = "UPDATE employees SET " + columnName + " = ? WHERE id = ?";
         
         try (Connection conn = DriverManager.getConnection(url, dbUser, dbPassword);
              PreparedStatement pstmt = conn.prepareStatement(sql)) 
-             {
+        {
             
-            // Java usually pulls table edits as Strings, so we handle the salary conversion
             if (columnName.equals("salary")) 
             {
                 pstmt.setDouble(1, Double.parseDouble(newValue.toString()));
@@ -115,9 +111,45 @@ public class Lab02App extends JFrame
 
     public static void main(String[] args) 
     {
-        SwingUtilities.invokeLater(() -> 
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Enter MySQL username: ");
+        String user = scanner.nextLine();
+        
+        Console console = System.console();
+        String password;
+        
+        if (console != null) 
         {
-            new Lab02App().setVisible(true);
-        });
+            char[] passwordArray = console.readPassword("Enter MySQL password: ");
+            password = new String(passwordArray);
+        } 
+        else 
+        {
+            System.out.print("Enter MySQL password: ");
+            password = scanner.nextLine();
+        }
+
+        String url = "jdbc:mysql://localhost:3306/app_db";
+
+        System.out.println("Attempting to connect...");
+
+        try (Connection conn = DriverManager.getConnection(url, user, password)) 
+        {
+            System.out.println("Success! Java is connected to MySQL as '" + user + "'.");
+            
+            SwingUtilities.invokeLater(() -> 
+            {
+                new Lab02App(url, user, password).setVisible(true);
+            });
+        } 
+        catch (SQLException e) 
+        {
+            System.out.println("Connection failed. Access denied for user '" + user + "'.");
+        } 
+        finally 
+        {
+            scanner.close();
+        }
     }
 }
