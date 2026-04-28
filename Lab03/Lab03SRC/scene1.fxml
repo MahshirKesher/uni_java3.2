@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="scene1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="779.0" prefWidth="1101.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Lab03SRC.Controller">
+   <children>
+      <Button fx:id="buttonAdd" layoutX="418.0" layoutY="542.0" mnemonicParsing="false" onAction="#handleButtonAdd" text="Add" />
+      <Button fx:id="buttonDelete" layoutX="418.0" layoutY="605.0" mnemonicParsing="false" onAction="#handleButtonDelete" text="Delete" />
+      <Button fx:id="buttonUnselect" layoutX="522.0" layoutY="542.0" mnemonicParsing="false" onAction="#handleButtonUnselect" text="Unselect" />
+      <Button fx:id="buttonUpdate" layoutX="522.0" layoutY="605.0" mnemonicParsing="false" onAction="#handleButtonUpdate" text="Update" />
+      
+      <ImageView fx:id="image1" fitHeight="748.0" fitWidth="435.0" layoutX="652.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
+      
+      <TableView fx:id="table1" layoutX="14.0" layoutY="14.0" prefHeight="413.0" prefWidth="625.0">
+        <columns>
+          <TableColumn fx:id="id" prefWidth="38.0" text="ID" />
+          <TableColumn fx:id="name" prefWidth="221.0" text="Name" />
+          <TableColumn fx:id="region" prefWidth="171.0" text="Region" />
+          <TableColumn fx:id="latitude" prefWidth="103.0" text="Latitude" />
+          <TableColumn fx:id="longitude" prefWidth="91.0" text="Longitude" />
+        </columns>
+      </TableView>
+      
+      <TextField fx:id="textName" layoutX="77.0" layoutY="477.0" prefHeight="26.0" prefWidth="250.0" />
+      <TextField fx:id="textRegion" layoutX="77.0" layoutY="529.0" prefHeight="26.0" prefWidth="250.0" />
+      <TextField fx:id="textLatitude" layoutX="77.0" layoutY="577.0" prefHeight="26.0" prefWidth="250.0" />
+      <TextField fx:id="textLongitude" layoutX="77.0" layoutY="627.0" prefHeight="26.0" prefWidth="250.0" />
+      <TextField fx:id="textUrl" layoutX="77.0" layoutY="677.0" prefHeight="26.0" prefWidth="250.0" />
+      
+      <Label fx:id="labelName" layoutX="77.0" layoutY="459.0" text="Name" />
+      <Label fx:id="labelRegion" layoutX="77.0" layoutY="509.0" text="Region" />
+      <Label fx:id="labelLatitude" layoutX="80.0" layoutY="559.0" text="Latitude" />
+      <Label fx:id="labelLongitude" layoutX="74.0" layoutY="609.0" text="Longitude" />
+      <Label fx:id="labelUrl" layoutX="74.0" layoutY="659.0" text="Image URL" />
+   </children>
+</AnchorPane>
